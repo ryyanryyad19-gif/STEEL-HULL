@@ -647,10 +647,65 @@
       .pcard-year { order: 4; }
     }
 
-    /* ─── 3D Model Viewer ───────────────────────────────────────── */
-    .model3d {
-      padding-block: clamp(60px, 9vw, 120px);
+    /* ─── 3D Viewer (in-hero edition) ────────────────────────────── */
+    .hero-viewer { background: var(--bg-card); }
+    .hero-viewer::after { display: none !important; }
+    .hero-viewer .viewer-stage {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
     }
+    .hero-viewer .viewer-poster {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card-warm) 100%);
+    }
+    .hero-viewer .viewer-poster::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('assets/img/hull-01-cad-side.jpg') center/cover no-repeat;
+      opacity: .12;
+      filter: saturate(0) blur(1px);
+    }
+    .hero-viewer .viewer-overlay {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      gap: 14px;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+    .hero-viewer .viewer-canvas {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-viewer.loaded .viewer-poster { display: none; }
+    .viewer-stl-badge {
+      position: absolute;
+      bottom: 14px;
+      inset-inline-end: 14px;
+      z-index: 4;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: rgba(26,26,22,.85);
+      color: var(--bg);
+      border-radius: 999px;
+      font-family: var(--font-disp);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      transition: background .2s var(--ease), transform .2s var(--ease);
+    }
+    .viewer-stl-badge:hover { background: var(--teal); transform: translateY(-1px); }
+    .viewer-stl-badge svg { width: 12px; height: 12px; }
+
     .viewer-card {
       background: var(--bg-card);
       border: 1px solid var(--line);
@@ -1436,7 +1491,6 @@
       <a href="#hero" data-close>المقدّمة <span class="it">— البداية.</span></a>
       <a href="#intro" data-close>الفكرة <span class="it">— لماذا؟</span></a>
       <a href="#components" data-close>المكوّنات <span class="it">— الأربعة.</span></a>
-      <a href="#model3d" data-close>النموذج ثلاثي الأبعاد <span class="it">— تفاعلي.</span></a>
       <a href="#stresses" data-close>الإجهادات <span class="it">— القوى.</span></a>
       <a href="#welding" data-close>اللحام <span class="it">— الرَّبط.</span></a>
       <a href="#lessons" data-close>الدروس <span class="it">— ما تعلّمناه.</span></a>
@@ -1476,8 +1530,29 @@
             </a>
           </div>
 
-          <div class="hero-photo" data-reveal aria-hidden="true">
-            <img src="assets/img/hull-05-built.jpg" alt="" loading="eager" decoding="async" />
+          <div class="hero-photo hero-viewer" id="viewerCard" data-reveal>
+            <div class="viewer-stage" id="viewerStage">
+              <div class="viewer-poster" id="viewerPoster">
+                <div class="viewer-overlay">
+                  <span class="viewer-spinner" aria-hidden="true"></span>
+                  <p class="viewer-hint">جارٍ تحضير النموذج ثلاثي الأبعاد...</p>
+                  <button class="viewer-play" id="viewerPlay" type="button" aria-label="تشغيل العارض ثلاثي الأبعاد">
+                    <span class="ico" aria-hidden="true">
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <path d="M5 3l8 5-8 5V3z" fill="currentColor"/>
+                      </svg>
+                    </span>
+                    <span>تشغيل يدوي</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <a class="viewer-stl-badge" href="assets/model.stl" download="hull-model.stl" aria-label="تحميل ملف STL">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 2v9m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>STL</span>
+            </a>
           </div>
 
           <aside class="hero-stats" data-reveal aria-label="إحصائيات المشروع">
@@ -1630,46 +1705,6 @@
             </div>
           </article>
 
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── 3D MODEL VIEWER ─────────────────────────── -->
-    <section class="model3d" id="model3d">
-      <div class="container">
-        <div class="section-head">
-          <h2 data-reveal>إستكشف <span class="it">الهيكل.</span></h2>
-          <p class="lead" data-reveal>قطاع ثلاثي الأبعاد من نموذج الهيكل، مأخوذ مباشرةً من ملف SOLIDWORKS الأصلي. اسحب للتدوير، عجلة الفأرة (أو إصبعان على اللمس) للتقريب. يبدأ العرض تلقائياً عند الوصول إلى هذا القسم — ومع وضع توفير البيانات يبقى الزر لتشغيله يدوياً.</p>
-        </div>
-
-        <div class="viewer-card" id="viewerCard" data-reveal>
-          <div class="viewer-stage" id="viewerStage">
-            <div class="viewer-poster" id="viewerPoster">
-              <div class="viewer-overlay">
-                <button class="viewer-play" id="viewerPlay" type="button" aria-label="تشغيل العارض ثلاثي الأبعاد">
-                  <span class="ico" aria-hidden="true">
-                    <svg viewBox="0 0 16 16" fill="none">
-                      <path d="M5 3l8 5-8 5V3z" fill="currentColor"/>
-                    </svg>
-                  </span>
-                  <span>تشغيل النموذج الآن</span>
-                </button>
-                <p class="viewer-hint">يبدأ تلقائياً عند الوصول إلى هذا القسم · ٨٤ كيلوبايت STL</p>
-              </div>
-            </div>
-          </div>
-          <div class="viewer-meta">
-            <div class="viewer-info">
-              <strong>نموذج الهيكل · SOLIDWORKS STL</strong>
-              <span>مقطع لقاطرة بحرية بقوّة شدّ ٧٠ ألف طن — مُصدَّر مباشرةً من ملف المشروع.</span>
-            </div>
-            <a class="viewer-download" href="assets/model.stl" download="hull-model.stl">
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M8 2v9m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              تحميل الملف (.stl)
-            </a>
-          </div>
         </div>
       </div>
     </section>
@@ -2004,10 +2039,9 @@
       }
 
       /* ── 3D Model Viewer (auto-load on visible + click fallback) ── */
-      const viewerPlay   = document.getElementById('viewerPlay');
-      const viewerCard   = document.getElementById('viewerCard');
-      const viewerStage  = document.getElementById('viewerStage');
-      const viewerSection = document.getElementById('model3d');
+      const viewerPlay  = document.getElementById('viewerPlay');
+      const viewerCard  = document.getElementById('viewerCard');
+      const viewerStage = document.getElementById('viewerStage');
 
       const showViewerOverlay = (html, withSpinner) => {
         const el = document.createElement('div');
@@ -2073,6 +2107,10 @@
             controls.zoomSpeed = 0.9;
             controls.minDistance = 0.6;
             controls.maxDistance = 12;
+            // Slow auto-rotate to catch the eye — pauses on touch/mouse interaction.
+            controls.autoRotate = !isMobile;
+            controls.autoRotateSpeed = 0.6;
+            controls.addEventListener('start', () => { controls.autoRotate = false; });
 
             let needsRender = true;
             const requestRender = () => { needsRender = true; };
@@ -2152,26 +2190,25 @@
         }
       };
 
-      // Manual trigger (button) — kept as a fallback for old browsers or auto-load failures.
+      // Manual trigger (button) — kept as a fallback for slow connections or auto-load failures.
       if (viewerPlay) {
         viewerPlay.addEventListener('click', initViewer);
       }
 
-      // Auto-load when section approaches viewport (~400px before).
-      // Respects reduced-motion: still loads (it's not animation, it's content).
-      // Respects Save-Data header: skips auto-load to save mobile data.
+      // The viewer now lives in the hero (always visible). Auto-load on browser idle
+      // after page load so it doesn't compete with critical content / fonts / images.
+      // Respects Save-Data header: skips auto-load on data-saver mode.
       const saveData = navigator.connection && navigator.connection.saveData === true;
-      if (viewerSection && 'IntersectionObserver' in window && !saveData) {
-        const vio = new IntersectionObserver((entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              vio.disconnect();
-              initViewer();
-              break;
-            }
+      if (viewerCard && !saveData) {
+        const scheduleViewer = () => {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(initViewer, { timeout: 2500 });
+          } else {
+            setTimeout(initViewer, 1200);
           }
-        }, { rootMargin: '0px 0px 400px 0px', threshold: 0.01 });
-        vio.observe(viewerSection);
+        };
+        if (document.readyState === 'complete') scheduleViewer();
+        else window.addEventListener('load', scheduleViewer, { once: true });
       }
 
       /* ── Locale-aware year ─────────────────────────── */
