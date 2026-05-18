@@ -1639,7 +1639,7 @@
       <div class="container">
         <div class="section-head">
           <h2 data-reveal>إستكشف <span class="it">الهيكل.</span></h2>
-          <p class="lead" data-reveal>قطاع ثلاثي الأبعاد من نموذج الهيكل، مأخوذ مباشرةً من ملف SOLIDWORKS الأصلي. اسحب للتدوير، عجلة الفأرة (أو إصبعان على اللمس) للتقريب. مكتبة العرض تُحمَّل فقط عند الضغط — لا تستهلك بياناتك بدون داعٍ.</p>
+          <p class="lead" data-reveal>قطاع ثلاثي الأبعاد من نموذج الهيكل، مأخوذ مباشرةً من ملف SOLIDWORKS الأصلي. اسحب للتدوير، عجلة الفأرة (أو إصبعان على اللمس) للتقريب. يبدأ العرض تلقائياً عند الوصول إلى هذا القسم — ومع وضع توفير البيانات يبقى الزر لتشغيله يدوياً.</p>
         </div>
 
         <div class="viewer-card" id="viewerCard" data-reveal>
@@ -1652,9 +1652,9 @@
                       <path d="M5 3l8 5-8 5V3z" fill="currentColor"/>
                     </svg>
                   </span>
-                  <span>تشغيل النموذج ثلاثي الأبعاد</span>
+                  <span>تشغيل النموذج الآن</span>
                 </button>
-                <p class="viewer-hint">٨٤ كيلوبايت STL · مكتبة Three.js تُحمَّل عند الضغط</p>
+                <p class="viewer-hint">يبدأ تلقائياً عند الوصول إلى هذا القسم · ٨٤ كيلوبايت STL</p>
               </div>
             </div>
           </div>
@@ -2003,10 +2003,11 @@
         document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('is-in'));
       }
 
-      /* ── 3D Model Viewer (lazy-load Three.js on click) ── */
-      const viewerPlay  = document.getElementById('viewerPlay');
-      const viewerCard  = document.getElementById('viewerCard');
-      const viewerStage = document.getElementById('viewerStage');
+      /* ── 3D Model Viewer (auto-load on visible + click fallback) ── */
+      const viewerPlay   = document.getElementById('viewerPlay');
+      const viewerCard   = document.getElementById('viewerCard');
+      const viewerStage  = document.getElementById('viewerStage');
+      const viewerSection = document.getElementById('model3d');
 
       const showViewerOverlay = (html, withSpinner) => {
         const el = document.createElement('div');
@@ -2023,12 +2024,14 @@
         return el;
       };
 
-      if (viewerPlay) {
-        viewerPlay.addEventListener('click', async () => {
-          viewerPlay.disabled = true;
-          const loadingEl = showViewerOverlay('جارٍ تحميل المُحرّك ثلاثي الأبعاد...', true);
+      let viewerStarted = false;
+      const initViewer = async () => {
+        if (viewerStarted) return;
+        viewerStarted = true;
+        if (viewerPlay) viewerPlay.disabled = true;
+        const loadingEl = showViewerOverlay('جارٍ تحميل المُحرّك ثلاثي الأبعاد...', true);
 
-          try {
+        try {
             const V = '0.160.0';
             const base = 'https://unpkg.com/three@' + V;
             const [THREE, STLMod, OCMod] = await Promise.all([
@@ -2143,11 +2146,32 @@
               });
             }
 
-          } catch (err) {
-            console.error('[viewer]', err);
-            loadingEl.innerHTML = '<div>تعذّر تحميل المُحرّك ثلاثي الأبعاد. تحقّق من اتصالك بالإنترنت.</div>';
+        } catch (err) {
+          console.error('[viewer]', err);
+          loadingEl.innerHTML = '<div>تعذّر تحميل المُحرّك ثلاثي الأبعاد. تحقّق من اتصالك بالإنترنت.</div>';
+        }
+      };
+
+      // Manual trigger (button) — kept as a fallback for old browsers or auto-load failures.
+      if (viewerPlay) {
+        viewerPlay.addEventListener('click', initViewer);
+      }
+
+      // Auto-load when section approaches viewport (~400px before).
+      // Respects reduced-motion: still loads (it's not animation, it's content).
+      // Respects Save-Data header: skips auto-load to save mobile data.
+      const saveData = navigator.connection && navigator.connection.saveData === true;
+      if (viewerSection && 'IntersectionObserver' in window && !saveData) {
+        const vio = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              vio.disconnect();
+              initViewer();
+              break;
+            }
           }
-        });
+        }, { rootMargin: '0px 0px 400px 0px', threshold: 0.01 });
+        vio.observe(viewerSection);
       }
 
       /* ── Locale-aware year ─────────────────────────── */
