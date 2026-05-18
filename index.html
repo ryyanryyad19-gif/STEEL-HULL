@@ -15,7 +15,18 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://unpkg.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Cairo:wght@700;900&family=Amiri:ital,wght@0,700;1,400;1,700&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" />
+
+  <!-- Import map: lets STLLoader's internal `import from 'three'` resolve correctly. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 
   <style>
     /* ─── Design Tokens ─────────────────────────────────────────── */
@@ -2066,13 +2077,24 @@
         const loadingEl = showViewerOverlay('جارٍ تحميل المُحرّك ثلاثي الأبعاد...', true);
 
         try {
-            const V = '0.160.0';
-            const base = 'https://unpkg.com/three@' + V;
-            const [THREE, STLMod, OCMod] = await Promise.all([
-              import(base + '/build/three.module.js'),
-              import(base + '/examples/jsm/loaders/STLLoader.js'),
-              import(base + '/examples/jsm/controls/OrbitControls.js')
-            ]);
+            // Primary: bare specifiers resolved via the import map in <head> (unpkg).
+            // Fallback: esm.sh — auto-rewrites bare specifiers, works without importmap.
+            let THREE, STLMod, OCMod;
+            try {
+              [THREE, STLMod, OCMod] = await Promise.all([
+                import('three'),
+                import('three/addons/loaders/STLLoader.js'),
+                import('three/addons/controls/OrbitControls.js')
+              ]);
+            } catch (primaryErr) {
+              console.warn('[viewer] primary CDN failed, trying esm.sh', primaryErr);
+              const E = 'https://esm.sh/three@0.160.0';
+              [THREE, STLMod, OCMod] = await Promise.all([
+                import(E),
+                import(E + '/examples/jsm/loaders/STLLoader.js'),
+                import(E + '/examples/jsm/controls/OrbitControls.js')
+              ]);
+            }
             const { STLLoader } = STLMod;
             const { OrbitControls } = OCMod;
 
