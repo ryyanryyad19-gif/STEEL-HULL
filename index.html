@@ -369,6 +369,11 @@
       padding-top: 120px;
       overflow: hidden;
     }
+    @media (max-width: 720px) {
+      .hero { min-height: auto; padding-top: 100px; padding-bottom: 56px; }
+      .hero-stats { margin-top: 56px; padding-top: 32px; }
+      .hero h1 { font-size: clamp(56px, 18vw, 120px) !important; }
+    }
     .hero::before {
       content: ''; position: absolute; inset: 0;
       background: var(--grad-aurora);
@@ -501,6 +506,8 @@
       display: flex; flex-direction: column; align-items: center; gap: 12px;
       z-index: 3;
     }
+    /* Hide on phone — phones obviously scroll, and it overlaps the stats */
+    @media (max-width: 720px) { .scroll-hint { display: none; } }
     .scroll-hint .line {
       width: 1px; height: 40px;
       background: linear-gradient(to bottom, var(--fg-dim), transparent);
@@ -524,15 +531,27 @@
     }
     .marquee-track {
       display: inline-flex; gap: 64px;
-      animation: scroll-x 35s linear infinite;
+      animation: scroll-x 40s linear infinite;
       font-family: var(--font-display);
-      font-size: clamp(24px, 4.2vw, 48px);
+      font-size: clamp(22px, 3.8vw, 44px);
       font-weight: 700;
       color: var(--navy);
+      /* GPU layer for smooth animation */
+      will-change: transform;
+      transform: translate3d(0,0,0);
+      backface-visibility: hidden;
     }
-    .marquee-track > span { display: inline-flex; align-items: center; gap: 64px; }
-    .marquee-track svg { width: 28px; height: 28px; color: var(--gold); }
-    @keyframes scroll-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-track > span { display: inline-flex; align-items: center; gap: 40px; }
+    .marquee-track svg { width: 26px; height: 26px; color: var(--gold); flex-shrink: 0; }
+    @keyframes scroll-x { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+
+    /* Mobile: slower marquee, smaller items, smaller icons */
+    @media (max-width: 720px) {
+      .marquee { padding: 18px 0; }
+      .marquee-track { animation-duration: 65s; font-size: 19px; gap: 36px; }
+      .marquee-track > span { gap: 28px; }
+      .marquee-track svg { width: 16px; height: 16px; }
+    }
 
     /* ============== Vision section ============== */
     .vision {
