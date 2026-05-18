@@ -2133,17 +2133,17 @@
             viewerStage.appendChild(canvas);
 
             const scene = new THREE.Scene();
-            // SOLIDWORKS-style "Default" appearance: hemisphere sky + right-front key.
-            const hemi = new THREE.HemisphereLight(0xf0f3f7, 0x5e6470, 0.55);
+            // SOLIDWORKS Default lighting: bright sky + warm key + cool back rim.
+            const hemi = new THREE.HemisphereLight(0xffffff, 0x707880, 0.80);
             scene.add(hemi);
-            const key = new THREE.DirectionalLight(0xffffff, 0.70);
-            key.position.set(8, 7, 7);   // upper-right-front — primary light
+            const key = new THREE.DirectionalLight(0xffffff, 0.85);
+            key.position.set(7, 6, 8);    // upper-right-front (matches reference)
             scene.add(key);
-            const fillL = new THREE.DirectionalLight(0xffffff, 0.32);
-            fillL.position.set(-6, 4, 4); // upper-left-front — softens left shadow
+            const fillL = new THREE.DirectionalLight(0xffffff, 0.40);
+            fillL.position.set(-7, 3, 5); // upper-left-front softener
             scene.add(fillL);
-            const back = new THREE.DirectionalLight(0xdde2ea, 0.18);
-            back.position.set(0, 2, -8);  // back rim — gives silhouette edge
+            const back = new THREE.DirectionalLight(0xc8d2dc, 0.25);
+            back.position.set(0, 4, -7);  // cool back rim
             scene.add(back);
 
             const camera = new THREE.PerspectiveCamera(38, rect.width / rect.height, 0.05, 200);
@@ -2166,11 +2166,11 @@
               geometry.center();
               geometry.computeVertexNormals();
 
-              // SOLIDWORKS-style: PBR matte metal for realistic gray with subtle sheen.
-              const mat = new THREE.MeshStandardMaterial({
-                color: 0xb4b8be,
-                metalness: 0.42,
-                roughness: 0.55,
+              // SOLIDWORKS 'Default' silver-gray (Phong — no env-map needed, stays bright).
+              const mat = new THREE.MeshPhongMaterial({
+                color: 0xb8bcc2,
+                specular: 0x6e747c,
+                shininess: 35,
                 flatShading: false
               });
               const mesh = new THREE.Mesh(geometry, mat);
@@ -2188,8 +2188,13 @@
               const center = box.getCenter(new THREE.Vector3());
               const maxDim = Math.max(size.x, size.y, size.z);
               const fitDist = maxDim / (2 * Math.tan((Math.PI * camera.fov) / 360));
-              // Classic SW isometric: upper-right-front, slight elevation.
-              camera.position.set(fitDist * 1.45, fitDist * 0.88, fitDist * 1.55);
+              // Classic SW isometric: low elevation (~18°), 3/4 view from upper-right-front.
+              // Lower Y avoids looking down into the open shell — shows the hex profile.
+              camera.position.set(
+                center.x + fitDist * 1.55,
+                center.y + fitDist * 0.55,
+                center.z + fitDist * 1.45
+              );
               camera.lookAt(center);
               controls.target.copy(center);
               controls.update();
