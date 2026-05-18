@@ -89,12 +89,24 @@
     ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
-    /* Subtle page texture (paper-like) */
+    /* Subtle page texture (paper-like) — no fixed attachment to keep mobile smooth */
     body {
       background-image:
         radial-gradient(circle at 25% 15%, rgba(201,162,74,.04) 0%, transparent 50%),
         radial-gradient(circle at 75% 85%, rgba(11,34,64,.03) 0%, transparent 50%);
-      background-attachment: fixed;
+    }
+    /* Mobile perf overrides */
+    @media (max-width: 720px) {
+      .header.scrolled { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(248,244,236,.96) !important; }
+      .hero-tag, .nav-links { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+      .hero-grid { display: none; }
+      /* Reduce hero-canvas opacity so removing it isn't jarring */
+      .model-stats { display: none; }
+      /* Lighter shadows */
+      .step:hover, .member:hover, .lesson:hover, .component:hover { box-shadow: none !important; }
+    }
+    @media (max-width: 480px) {
+      .hero-canvas { display: none !important; }
     }
 
     /* ============== Layout primitives ============== */
@@ -104,6 +116,11 @@
       padding: 0 clamp(20px, 4vw, 48px);
     }
     section { position: relative; padding: clamp(80px, 12vh, 160px) 0; }
+    /* Skip rendering off-screen sections — huge mobile win */
+    section:not(#hero):not(#vision):not(#how) {
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 800px;
+    }
 
     .eyebrow {
       display: inline-flex; align-items: center; gap: 12px;
@@ -2528,18 +2545,35 @@
     }
   </script>
 
-  <!-- 3D Model viewer (STL) -->
+  <!-- 3D Model viewer (STL) — lazy init when section enters viewport -->
   <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+    const container = document.getElementById('modelViewer');
+    if (container) {
+      // Wait until the viewer is near the viewport before loading Three.js (saves ~600KB on initial load)
+      const initObserver = new IntersectionObserver(async (entries, obs) => {
+        if (!entries[0].isIntersecting) return;
+        obs.disconnect();
+        await initViewer();
+      }, { rootMargin: '300px' });
+      initObserver.observe(container);
+    }
+
+    async function initViewer() {
+    const [THREEmod, OCmod, STLmod] = await Promise.all([
+      import('three'),
+      import('three/addons/controls/OrbitControls.js'),
+      import('three/addons/loaders/STLLoader.js'),
+    ]);
+    const THREE = THREEmod;
+    const OrbitControls = OCmod.OrbitControls;
+    const STLLoader = STLmod.STLLoader;
 
     const container = document.getElementById('modelViewer');
     const canvas = document.getElementById('modelCanvas');
     const loadingEl = document.getElementById('modelLoading');
     const fpsEl = document.getElementById('modelFps');
     const trisEl = document.getElementById('modelTris');
-    if (!container) { /* no viewer present */ } else {
+    if (!container) { return; } else {
 
     const scene = new THREE.Scene();
 
@@ -2726,14 +2760,32 @@
       }
     }
 
-    // Animate
+    // Animate — only when viewer is visible
+    let isVisible = true;
+    let rafId = null;
     function tick(now) {
       controls.update();
       renderer.render(scene, camera);
       updateFps(now);
-      requestAnimationFrame(tick);
+      if (isVisible) rafId = requestAnimationFrame(tick);
     }
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
+
+    // Pause render loop when off-screen (saves battery + CPU on mobile)
+    const visObs = new IntersectionObserver((entries) => {
+      const wasVisible = isVisible;
+      isVisible = entries[0].isIntersecting;
+      if (isVisible && !wasVisible) {
+        rafId = requestAnimationFrame(tick);
+      }
+    }, { threshold: 0.05 });
+    visObs.observe(container);
+
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { isVisible = false; if (rafId) cancelAnimationFrame(rafId); }
+      else if (visObs && container.getBoundingClientRect().top < window.innerHeight) { isVisible = true; rafId = requestAnimationFrame(tick); }
+    });
 
     // UI controls
     const buttons = document.querySelectorAll('.model-controls button');
@@ -2775,12 +2827,20 @@
     });
 
     } // end if container
+    } // end initViewer
   </script>
 
   <script>
-    // ============== Custom cursor ==============
+    // ============== Custom cursor (desktop only) ==============
     (function() {
-      if (matchMedia('(hover: none)').matches) return;
+      const isTouch = matchMedia('(hover: none)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+      if (isTouch) {
+        // Hide cursor elements entirely on touch devices
+        document.getElementById('cursorDot')?.remove();
+        document.getElementById('cursorRing')?.remove();
+        document.body.style.cursor = 'auto';
+        return;
+      }
       const dot = document.getElementById('cursorDot');
       const ring = document.getElementById('cursorRing');
       let dx = 0, dy = 0, rx = 0, ry = 0, tx = 0, ty = 0;
@@ -2798,17 +2858,23 @@
       });
     })();
 
-    // ============== Scroll progress ==============
+    // ============== Scroll progress (rAF-throttled) ==============
     (function() {
       const bar = document.getElementById('progressBar');
       const header = document.getElementById('header');
+      let ticking = false;
       function onScroll() {
-        const h = document.documentElement;
-        const total = h.scrollHeight - h.clientHeight;
-        const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
-        bar.style.setProperty('--progress', pct + '%');
-        if (window.scrollY > 40) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const h = document.documentElement;
+          const total = h.scrollHeight - h.clientHeight;
+          const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+          bar.style.setProperty('--progress', pct + '%');
+          if (window.scrollY > 40) header.classList.add('scrolled');
+          else header.classList.remove('scrolled');
+          ticking = false;
+        });
       }
       window.addEventListener('scroll', onScroll, { passive: true });
       onScroll();
@@ -2887,10 +2953,16 @@
       const canvas = document.getElementById('heroCanvas');
       if (!canvas) return;
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      // Skip entirely on small phones — too expensive
+      const isMobile = window.innerWidth < 720;
+      if (window.innerWidth < 480) { canvas.style.display = 'none'; return; }
       const ctx = canvas.getContext('2d');
-      let W = 0, H = 0, dpr = Math.min(devicePixelRatio || 1, 2);
+      let W = 0, H = 0, dpr = Math.min(devicePixelRatio || 1, isMobile ? 1 : 2);
       const particles = [];
-      const COUNT = window.innerWidth < 720 ? 35 : 70;
+      const COUNT = isMobile ? 18 : 50;
+      const LINK_DIST = isMobile ? 90 : 130;
+      let running = true;
+      let rafId = null;
 
       function resize() {
         W = canvas.clientWidth = canvas.parentElement.clientWidth;
@@ -2918,23 +2990,46 @@
           ctx.fillStyle = 'rgba(201,162,74,0.55)';
           ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
         }
+        const limitSq = LINK_DIST * LINK_DIST;
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
             const a = particles[i], b = particles[j];
             const dx = a.x - b.x, dy = a.y - b.y;
             const d2 = dx*dx + dy*dy;
-            if (d2 < 130*130) {
-              const op = 1 - Math.sqrt(d2)/130;
+            if (d2 < limitSq) {
+              const op = 1 - Math.sqrt(d2)/LINK_DIST;
               ctx.strokeStyle = `rgba(11,34,64,${op*0.18})`;
               ctx.lineWidth = 1;
               ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
             }
           }
         }
-        requestAnimationFrame(step);
+        if (running) rafId = requestAnimationFrame(step);
       }
-      resize(); init(); step();
-      window.addEventListener('resize', () => { resize(); init(); });
+      resize(); init();
+      rafId = requestAnimationFrame(step);
+
+      // Pause when hero is scrolled out of view
+      const hero = canvas.parentElement;
+      const heroObs = new IntersectionObserver((entries) => {
+        const wasRunning = running;
+        running = entries[0].isIntersecting;
+        if (running && !wasRunning) rafId = requestAnimationFrame(step);
+      }, { threshold: 0 });
+      heroObs.observe(hero);
+
+      // Pause when tab hidden
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) { running = false; if (rafId) cancelAnimationFrame(rafId); }
+        else { running = true; rafId = requestAnimationFrame(step); }
+      });
+
+      // Debounce resize
+      let resizeT;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeT);
+        resizeT = setTimeout(() => { resize(); init(); }, 200);
+      });
     })();
   </script>
 </body>
