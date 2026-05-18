@@ -2174,26 +2174,42 @@
                 flatShading: false
               });
               const mesh = new THREE.Mesh(geometry, mat);
-              mesh.rotation.x = -Math.PI / 2;
+              // STL from SOLIDWORKS is typically Y-up already — no rotation needed.
+              // If the model still looks tipped over, we'll auto-orient below.
               scene.add(mesh);
 
               const edges = new THREE.EdgesGeometry(geometry, 28);
               const edgeMat = new THREE.LineBasicMaterial({ color: 0x1d2126, transparent: true, opacity: 0.22 });
               const lines = new THREE.LineSegments(edges, edgeMat);
-              lines.rotation.x = -Math.PI / 2;
               scene.add(lines);
+
+              // Auto-orient: figure out which axis is the prism length (the longest)
+              // and rotate so that axis sits horizontally → we see the hexagonal end.
+              const sz = new THREE.Box3().setFromObject(mesh).getSize(new THREE.Vector3());
+              const longest = sz.x >= sz.y && sz.x >= sz.z ? 'x'
+                            : sz.y >= sz.x && sz.y >= sz.z ? 'y' : 'z';
+              if (longest === 'x') {
+                // Prism extends along X — rotate so it goes along Z (toward viewer)
+                mesh.rotation.y = Math.PI / 2;
+                lines.rotation.y = Math.PI / 2;
+              } else if (longest === 'y') {
+                // Prism extends along Y (vertical) — rotate so it goes along Z
+                mesh.rotation.x = Math.PI / 2;
+                lines.rotation.x = Math.PI / 2;
+              }
+              // (longest === 'z'): already lined up with view direction
 
               const box = new THREE.Box3().setFromObject(mesh);
               const size = box.getSize(new THREE.Vector3());
               const center = box.getCenter(new THREE.Vector3());
               const maxDim = Math.max(size.x, size.y, size.z);
               const fitDist = maxDim / (2 * Math.tan((Math.PI * camera.fov) / 360));
-              // Classic SW isometric: low elevation (~18°), 3/4 view from upper-right-front.
-              // Lower Y avoids looking down into the open shell — shows the hex profile.
+              // Classic SW iso looking ALONG the prism length (Z after auto-orient),
+              // with a 3/4 tilt for depth. Z is dominant so we see the hex end face.
               camera.position.set(
-                center.x + fitDist * 1.55,
+                center.x + fitDist * 0.85,
                 center.y + fitDist * 0.55,
-                center.z + fitDist * 1.45
+                center.z + fitDist * 1.70
               );
               camera.lookAt(center);
               controls.target.copy(center);
