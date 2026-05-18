@@ -16,7 +16,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Playfair+Display:ital,wght@1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     /* ============== Design Tokens · Editorial/Maritime ============== */
@@ -49,10 +49,11 @@
       --grad-text: linear-gradient(135deg, #C9A24A 0%, #A6843A 60%, #0B2240 100%);
       --grad-card: linear-gradient(180deg, rgba(201,162,74,.04) 0%, rgba(201,162,74,0) 100%);
 
-      --font-display: 'Readex Pro', 'Manrope', sans-serif;
-      --font-body: 'Readex Pro', 'Manrope', sans-serif;
-      --font-en: 'Manrope', system-ui, sans-serif;
-      --font-en-display: 'Manrope', sans-serif;
+      --font-display: 'Readex Pro', 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Readex Pro', 'Inter', sans-serif;
+      --font-en: 'Inter', system-ui, sans-serif;
+      --font-en-display: 'Bricolage Grotesque', 'Inter', sans-serif;
+      --font-serif-italic: 'Playfair Display', Georgia, serif;
       --font-mono: 'JetBrains Mono', monospace;
 
       --easing: cubic-bezier(.22,.61,.36,1);
@@ -120,9 +121,267 @@
       margin: 0 auto;
       padding: 0 clamp(20px, 4vw, 48px);
     }
-    /* Give the sidebar some breathing room on wide screens */
-    @media (min-width: 1280px) {
-      .container { padding-right: clamp(20px, 4vw, 48px); padding-left: 280px; }
+    /* Reference design has no sidebar */
+    .toc-sidebar { display: none !important; }
+
+    /* ============== New: Portfolio-style HEADER ============== */
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-en-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .04em;
+      color: var(--navy);
+    }
+    .brand-dot {
+      width: 12px; height: 12px;
+      background: var(--navy);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .brand-mark { display: none; }
+    .nav-links, .nav-cta { display: none !important; }
+    .menu-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 18px 10px 20px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 999px;
+      font-family: var(--font-en);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      transition: transform .2s, background .2s;
+    }
+    .menu-pill:hover { transform: scale(1.03); background: var(--navy-light); }
+    .menu-pill svg { width: 16px; height: 16px; }
+
+    /* ============== New: Hero (3-column) ============== */
+    .hero { padding: 100px 0 60px !important; min-height: auto; }
+    .hero-grid-3 {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr .7fr;
+      gap: clamp(24px, 4vw, 56px);
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    @media (max-width: 900px) {
+      .hero-grid-3 { grid-template-columns: 1fr; gap: 32px; }
+    }
+    .hero-text { padding-top: 16px; }
+    .hero-greeting {
+      font-family: var(--font-serif-italic);
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(18px, 1.8vw, 22px);
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .hero h1.hero-headline {
+      font-family: var(--font-en-display);
+      font-weight: 800;
+      font-size: clamp(48px, 7.5vw, 90px);
+      line-height: .95;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1.hero-headline .italic {
+      font-family: var(--font-serif-italic);
+      font-style: italic;
+      font-weight: 600;
+      text-transform: none;
+      color: var(--navy);
+      display: inline-block;
+      margin-left: 8px;
+    }
+    .hero h1.hero-headline .gold { color: var(--gold); }
+    .hero-desc {
+      font-size: 16px;
+      color: var(--fg-muted);
+      line-height: 1.75;
+      margin-bottom: 28px;
+      max-width: 38ch;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 12px 12px 12px 22px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 999px;
+      font-family: var(--font-en);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      transition: transform .2s, background .2s;
+    }
+    .hero-cta:hover { transform: scale(1.03); background: var(--navy-light); }
+    .hero-cta .arrow-circle {
+      width: 28px; height: 28px;
+      background: #fff;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: var(--navy);
+    }
+    .hero-cta .arrow-circle svg { width: 14px; height: 14px; }
+
+    .hero-image {
+      aspect-ratio: 4 / 5;
+      background: var(--bg-cream-strong);
+      border-radius: 200px 200px 0 0;
+      overflow: hidden;
+      position: relative;
+      display: grid; place-items: center;
+    }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-image .ship-icon {
+      width: 50%; height: auto; opacity: .15;
+      color: var(--navy);
+    }
+    @media (max-width: 900px) {
+      .hero-image { aspect-ratio: 4/3; border-radius: 100px 100px 8px 8px; max-width: 420px; margin: 0 auto; }
+    }
+
+    .hero-stats-list {
+      display: flex; flex-direction: column;
+      gap: 24px;
+      padding-top: 16px;
+    }
+    .hero-stats-list .stat-item .num {
+      font-family: var(--font-en-display);
+      font-size: clamp(22px, 2.3vw, 32px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-stats-list .stat-item .num .gold { color: var(--gold); }
+    .hero-stats-list .stat-item .label {
+      font-family: var(--font-body);
+      font-size: 12.5px;
+      color: var(--fg-muted);
+      line-height: 1.4;
+    }
+    @media (max-width: 900px) {
+      .hero-stats-list { flex-direction: row; flex-wrap: wrap; gap: 20px 32px; justify-content: space-between; }
+      .hero-stats-list .stat-item { flex: 1 1 42%; }
+    }
+
+    /* ============== New: 4-Column features row ============== */
+    .features-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      padding: 56px 0;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 720px) {
+      .features-row { grid-template-columns: 1fr 1fr; gap: 28px; padding: 40px 0; }
+    }
+    .feature-item h4 {
+      font-family: var(--font-en);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .feature-item p {
+      font-size: 13.5px;
+      color: var(--fg-muted);
+      line-height: 1.65;
+    }
+
+    /* ============== New: Big-headline About section ============== */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      gap: clamp(40px, 6vw, 88px);
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; } }
+    .about-headline {
+      font-family: var(--font-en-display);
+      font-weight: 800;
+      font-size: clamp(34px, 4.5vw, 60px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--navy);
+      text-transform: uppercase;
+    }
+    .about-headline .italic {
+      font-family: var(--font-serif-italic);
+      font-style: italic;
+      font-weight: 600;
+      text-transform: none;
+      color: var(--gold);
+    }
+    .about-body p:first-child {
+      font-size: 18px;
+      color: var(--navy);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    .about-body p {
+      font-size: 15px;
+      color: var(--fg-muted);
+      line-height: 1.85;
+      margin-bottom: 20px;
+    }
+
+    /* ============== New: Portfolio-style image cards (gallery) ============== */
+    .portfolio-stack {
+      display: flex; flex-direction: column;
+      gap: 56px;
+      margin-top: 48px;
+    }
+    .portfolio-card { position: relative; }
+    .portfolio-image {
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--bg-cream-strong);
+      margin-bottom: 16px;
+    }
+    .portfolio-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--easing); }
+    .portfolio-card:hover .portfolio-image img { transform: scale(1.02); }
+    .portfolio-meta {
+      display: grid; grid-template-columns: 1fr 2fr auto auto;
+      gap: 24px;
+      align-items: baseline;
+      padding-top: 8px;
+    }
+    @media (max-width: 720px) {
+      .portfolio-meta { grid-template-columns: 1fr; gap: 4px; }
+    }
+    .portfolio-title {
+      font-family: var(--font-en-display);
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--navy);
+    }
+    .portfolio-desc { font-size: 14px; color: var(--fg-muted); line-height: 1.5; }
+    .portfolio-year {
+      font-family: var(--font-en);
+      font-size: 13px;
+      color: var(--fg-muted);
+    }
+    .portfolio-tag {
+      padding: 4px 12px;
+      background: var(--navy);
+      color: #fff;
+      font-family: var(--font-en);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      border-radius: 999px;
+      text-transform: lowercase;
     }
     section { position: relative; padding: clamp(80px, 12vh, 160px) 0; }
 
@@ -1996,30 +2255,13 @@
   <header class="header" id="header">
     <div class="container nav">
       <a href="#hero" class="brand">
-        <span class="brand-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#C9A24A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 18c2 1 4 1 6 0s4-1 6 0 4 1 6 0"/>
-            <path d="M5 14V8a2 2 0 012-2h10a2 2 0 012 2v6"/>
-            <path d="M9 6V4M15 6V4"/>
-          </svg>
-        </span>
+        <span class="brand-dot"></span>
         HULL · 70K
       </a>
-      <div class="nav-links">
-        <a href="#vision">المقدمة</a>
-        <a href="#goals">الهدف</a>
-        <a href="#model">النموذج 3D</a>
-        <a href="#innovation">المكونات</a>
-        <a href="#service">المشروع الخدمي</a>
-        <a href="#team">الفريق</a>
-      </div>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <a href="#cta" class="nav-cta">
-          <span>تواصل معنا</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
-        </a>
-        <button class="menu-btn" id="menuBtn" aria-label="القائمة"><span></span></button>
-      </div>
+      <button class="menu-pill" id="menuBtn" aria-label="القائمة">
+        <span>MENU</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </header>
 
@@ -2090,54 +2332,80 @@
     </div>
   </section>
 
-  <!-- ============== HERO ============== -->
+  <!-- ============== HERO (3-column portfolio style) ============== -->
   <section class="hero" id="hero">
-    <canvas class="hero-canvas" id="heroCanvas"></canvas>
-    <div class="hero-grid"></div>
-    <div class="container hero-content">
-      <div class="hero-tag">
-        <span class="pulse"></span>
-        مشروع تخرج · شعبة هندسة بناء وإصلاح السفن · بورسعيد
-      </div>
-      <h1>
-        <span class="word"><span>STEEL</span></span> <span class="word"><span>HULL.</span></span>
-      </h1>
-      <p class="hero-sub">
-        نموذج هيكل حديدي لقطاع من قاطرة بحرية بقوة شد <b style="color:var(--fg);">70,000 طن</b>. الدرع الذي يفصل بين الحياة والموت في أعالي البحار، مُجسَّداً بأيدي طلاب المعهد الفني للمنشآت البحرية.
-      </p>
-      <div class="hero-actions">
-        <a href="#vision" class="btn btn-primary">
-          اكتشف المشروع
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
-        </a>
-        <a href="#model" class="btn btn-ghost">
-          شاهد النموذج 3D
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
-        </a>
+    <div class="container">
+      <div class="hero-grid-3">
+        <!-- Left: Text -->
+        <div class="hero-text">
+          <p class="hero-greeting">— مشروع تخرّج، دفعة 2026،</p>
+          <h1 class="hero-headline">
+            نموذج هيكل<br/>
+            <span class="italic">حديدي</span>،<br/>
+            <span class="gold">قاطرة</span><br/>
+            بحرية.
+          </h1>
+          <p class="hero-desc">
+            من الفكرة إلى الثبات — هيكل بقوّة شدّ ٧٠٬٠٠٠ طن، مُجسَّد بأيدي طلاب المعهد الفني للمنشآت البحرية ببورسعيد.
+          </p>
+          <a href="#vision" class="hero-cta">
+            <span>اكتشف المشروع</span>
+            <span class="arrow-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </span>
+          </a>
+        </div>
+
+        <!-- Center: Image (hull CAD render) -->
+        <div class="hero-image">
+          <img src="./assets/img/hull-01-cad-side.jpg" alt="نموذج هيكل القاطرة" loading="eager" onerror="this.style.display='none'; this.parentElement.querySelector('.ship-icon').style.display='block';" />
+          <svg class="ship-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <path d="M3 18c2 1 4 1 6 0s4-1 6 0 4 1 6 0"/>
+            <path d="M5 14V8a2 2 0 012-2h10a2 2 0 012 2v6"/>
+            <path d="M9 6V4M15 6V4"/>
+          </svg>
+        </div>
+
+        <!-- Right: Stats list -->
+        <div class="hero-stats-list">
+          <div class="stat-item">
+            <div class="num">70K<span class="gold">+</span></div>
+            <div class="label">قوة الشدّ المصممة (طن)</div>
+          </div>
+          <div class="stat-item">
+            <div class="num">4<span class="gold">+</span></div>
+            <div class="label">أنواع إجهادات مدروسة</div>
+          </div>
+          <div class="stat-item">
+            <div class="num"><span class="gold">*</span>3</div>
+            <div class="label">طرق لحام مستخدمة</div>
+          </div>
+          <div class="stat-item">
+            <div class="num">8</div>
+            <div class="label">أعضاء فريق المشروع</div>
+          </div>
+        </div>
       </div>
 
-      <div class="hero-stats">
-        <div class="stat">
-          <div class="stat-num"><span data-count="70">0</span><span class="unit">ألف طن</span></div>
-          <div class="stat-label">قوة الشد المصممة</div>
+      <!-- 4-column features row -->
+      <div class="features-row">
+        <div class="feature-item">
+          <h4>تصميم إنشائي</h4>
+          <p>هيكل صُمّم على أسس هندسية تضمن القوّة والأمان أثناء الإبحار.</p>
         </div>
-        <div class="stat">
-          <div class="stat-num"><span data-count="4">0</span></div>
-          <div class="stat-label">أنواع إجهادات مدروسة</div>
+        <div class="feature-item">
+          <h4>توزيع الإجهادات</h4>
+          <p>تحليل دقيق لمناطق التركيز الحرجة في الدعامات والوصلات.</p>
         </div>
-        <div class="stat">
-          <div class="stat-num"><span data-count="3">0</span></div>
-          <div class="stat-label">طرق لحام مستخدمة</div>
+        <div class="feature-item">
+          <h4>مكوّنات متكاملة</h4>
+          <p>أربعة قطاعات رئيسية تعمل كنظام إنشائي واحد لمواجهة قوى البحر.</p>
         </div>
-        <div class="stat">
-          <div class="stat-num">2026</div>
-          <div class="stat-label">دفعة التخرج</div>
+        <div class="feature-item">
+          <h4>لحام معدني</h4>
+          <p>ثلاث طرق لحام معتمدة لربط ألواح الهيكل بدقّة وصلابة.</p>
         </div>
       </div>
-    </div>
-    <div class="scroll-hint">
-      <span>SCROLL</span>
-      <span class="line"></span>
     </div>
   </section>
 
@@ -2174,25 +2442,21 @@
   <!-- ============== VISION ============== -->
   <section id="vision">
     <div class="container">
-      <div class="vision">
-        <div>
-          <div class="plate-num reveal">I</div>
-          <div class="eyebrow reveal">المقدمة · Introduction</div>
-          <h2 class="section-title reveal">
-            من الفكرة<br/>
-            إلى <span class="accent">الثبات.</span>
-          </h2>
-          <p class="section-subtitle reveal">From Idea to Stability</p>
-        </div>
-        <div class="vision-text">
+      <div class="about-grid">
+        <h2 class="about-headline reveal">
+          صناعة هيكل،<br/>
+          صناعة <span class="italic">ثبات</span><br/>
+          و أمان.
+        </h2>
+        <div class="about-body">
           <p class="reveal">
-            الهيكل الحديدي هو الدرع الذي يفصل بين الحياة والموت في أعالي البحار، وهو الشاهد الأول على عظمة الهندسة البحرية وتطوّرها. لذلك اخترنا مشروعنا عن أهم خطوة في عالم الهندسة البحرية.
+            الهيكل الحديدي هو الدرع الذي يفصل بين الحياة والموت في أعالي البحار، وهو الشاهد الأول على عظمة الهندسة البحرية.
           </p>
           <p class="reveal" data-delay="1">
-            يُعدّ الهيكل الحديدي للسفينة المعجزة الهندسية التي غيّرت مجرى التاريخ البشري؛ فهو الجسر الصلب الذي ربط القارّات وحوّل المحيطات من عوائق مستحيلة إلى طرق ممهَّدة للتجارة والاستكشاف. ليس مجرد وعاءٍ للمحركات والبضائع، بل نظام إنشائي متكامل صُمّم ليكون مرناً بما يكفي لامتصاص صدمات الأمواج، وصلباً بما يكفي لمقاومة ضغوط هائلة لا ترحم.
+            يُعدّ الهيكل الحديدي للسفينة المعجزة الهندسية التي غيّرت مجرى التاريخ البشري؛ فهو الجسر الصلب الذي ربط القارّات وحوّل المحيطات من عوائق مستحيلة إلى طرق ممهَّدة للتجارة والاستكشاف. ليس مجرد وعاءٍ للمحركات والبضائع، بل نظام إنشائي متكامل صُمّم ليكون مرناً لامتصاص صدمات الأمواج، وصلباً لمقاومة ضغوط هائلة.
           </p>
           <p class="reveal" data-delay="2">
-            تكمن عبقريّته في قدرته على تحقيق معادلة صعبة: <b style="color:var(--fg);">توزيع الإجهادات.</b> فكل قطعة فولاذية — من «القرينة» (Keel) أساس السفينة، وصولاً إلى «الألواح الجانبية» (Shell Plating) — تعمل معاً كجسد واحد لمواجهة قوى فيزيائية معقّدة.
+            تكمن عبقريّته في قدرته على تحقيق معادلة صعبة: <b style="color:var(--navy);">توزيع الإجهادات.</b> فكل قطعة فولاذية — من «القرينة» (Keel) أساس السفينة، وصولاً إلى «الألواح الجانبية» (Shell Plating) — تعمل معاً كجسد واحد لمواجهة قوى فيزيائية معقّدة.
           </p>
         </div>
       </div>
@@ -2574,11 +2838,67 @@
   <!-- ============== GALLERY ============== -->
   <section id="gallery">
     <div class="container">
-      <div class="eyebrow reveal">معرض المشروع</div>
-      <h2 class="section-title reveal">من الفكرة <span class="accent">إلى التنفيذ.</span></h2>
-      <p class="section-lead reveal" data-delay="1">مراحل التصميم، التصنيع، واللحام — موثّقة بصور حقيقية من داخل ورش الشعبة.</p>
+      <div class="about-grid" style="margin-bottom: 32px;">
+        <h2 class="about-headline reveal">
+          من الفكرة<br/>
+          إلى <span class="italic">التنفيذ</span>.
+        </h2>
+        <div class="about-body">
+          <p class="reveal">مراحل التصميم، التصنيع، واللحام — موثّقة بصور حقيقية من داخل ورش شعبة بناء وإصلاح السفن.</p>
+        </div>
+      </div>
 
-      <div class="gallery">
+      <div class="portfolio-stack">
+        <article class="portfolio-card reveal">
+          <div class="portfolio-image">
+            <img loading="lazy" src="./assets/img/hull-01-cad-side.jpg" alt="رسم CAD" />
+          </div>
+          <div class="portfolio-meta">
+            <div class="portfolio-title">CAD DESIGN</div>
+            <div class="portfolio-desc">رسم ثلاثي الأبعاد للقاطرة من منظور جانبي</div>
+            <div class="portfolio-year">2026</div>
+            <div class="portfolio-tag">design</div>
+          </div>
+        </article>
+
+        <article class="portfolio-card reveal">
+          <div class="portfolio-image">
+            <img loading="lazy" src="./assets/img/hull-06-welding.jpg" alt="مرحلة اللحام" />
+          </div>
+          <div class="portfolio-meta">
+            <div class="portfolio-title">WELDING</div>
+            <div class="portfolio-desc">عملية لحام الألواح الفولاذية بتقنية القوس الكهربي</div>
+            <div class="portfolio-year">2026</div>
+            <div class="portfolio-tag">fabrication</div>
+          </div>
+        </article>
+
+        <article class="portfolio-card reveal">
+          <div class="portfolio-image">
+            <img loading="lazy" src="./assets/img/hull-05-built.jpg" alt="الهيكل المُكتمل" />
+          </div>
+          <div class="portfolio-meta">
+            <div class="portfolio-title">FINAL HULL</div>
+            <div class="portfolio-desc">الهيكل الحديدي بعد اكتمال التركيب وتجهيز السطح</div>
+            <div class="portfolio-year">2026</div>
+            <div class="portfolio-tag">complete</div>
+          </div>
+        </article>
+
+        <article class="portfolio-card reveal">
+          <div class="portfolio-image">
+            <img loading="lazy" src="./assets/img/hull-07-team-work.jpg" alt="فريق العمل" />
+          </div>
+          <div class="portfolio-meta">
+            <div class="portfolio-title">TEAM AT WORK</div>
+            <div class="portfolio-desc">فريق المشروع داخل ورشة الشعبة أثناء التنفيذ</div>
+            <div class="portfolio-year">2026</div>
+            <div class="portfolio-tag">behind-the-scenes</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="gallery" hidden>
         <figure class="reveal">
           <img loading="lazy" src="./assets/img/hull-01-cad-side.jpg" alt="رسم CAD للقاطرة البحرية - منظور جانبي" />
           <figcaption>01 · التصميم العام · CAD</figcaption>
