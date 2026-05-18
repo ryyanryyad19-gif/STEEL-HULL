@@ -350,6 +350,7 @@
     .hero-photo {
       position: relative;
       aspect-ratio: 4 / 5;
+      min-height: 360px;
       background: var(--bg-card);
       border-radius: 220px 220px 14px 14px;
       overflow: hidden;
@@ -406,7 +407,15 @@
 
     @media (max-width: 980px) {
       .hero-grid { grid-template-columns: 1fr; }
-      .hero-photo { aspect-ratio: 4/4; border-radius: 140px 140px 12px 12px; max-width: 520px; margin-inline: auto; }
+      .hero-photo {
+        aspect-ratio: 1 / 1;
+        height: min(82vw, 460px);
+        width: 100%;
+        max-width: 520px;
+        min-height: 320px;
+        border-radius: 140px 140px 12px 12px;
+        margin-inline: auto;
+      }
     }
     @media (max-width: 640px) {
       .hero-stats { grid-template-columns: repeat(2, 1fr); row-gap: 22px; }
