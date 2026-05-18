@@ -674,10 +674,11 @@
     .hero-viewer::after { display: none !important; }
     .hero-viewer.loaded {
       background:
+        radial-gradient(ellipse 95% 70% at 50% 38%, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 60%),
         linear-gradient(180deg,
-          #a4afbb 0%,
-          #c4cbd2 45%,
-          #e2e6ea 100%);
+          #8e98a6 0%,
+          #b8c2cc 45%,
+          #d8dee5 100%);
     }
     .hero-viewer .viewer-stage {
       position: absolute;
@@ -2123,23 +2124,27 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
             renderer.setSize(rect.width, rect.height);
             if ('outputColorSpace' in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+            if ('toneMapping' in renderer) {
+              renderer.toneMapping = THREE.ACESFilmicToneMapping;
+              renderer.toneMappingExposure = 1.05;
+            }
             const canvas = renderer.domElement;
             canvas.className = 'viewer-canvas';
             viewerStage.appendChild(canvas);
 
             const scene = new THREE.Scene();
-            // SOLIDWORKS-style neutral lighting: soft hemisphere + balanced directionals.
-            const hemi = new THREE.HemisphereLight(0xeef1f5, 0x7c8089, 0.65);
+            // SOLIDWORKS-style "Default" appearance: hemisphere sky + right-front key.
+            const hemi = new THREE.HemisphereLight(0xf0f3f7, 0x5e6470, 0.55);
             scene.add(hemi);
-            const keyL = new THREE.DirectionalLight(0xffffff, 0.55);
-            keyL.position.set(-6, 8, 6);
-            scene.add(keyL);
-            const keyR = new THREE.DirectionalLight(0xffffff, 0.40);
-            keyR.position.set(6, 6, 4);
-            scene.add(keyR);
-            const fill = new THREE.DirectionalLight(0xffffff, 0.20);
-            fill.position.set(0, -3, -5);
-            scene.add(fill);
+            const key = new THREE.DirectionalLight(0xffffff, 0.70);
+            key.position.set(8, 7, 7);   // upper-right-front — primary light
+            scene.add(key);
+            const fillL = new THREE.DirectionalLight(0xffffff, 0.32);
+            fillL.position.set(-6, 4, 4); // upper-left-front — softens left shadow
+            scene.add(fillL);
+            const back = new THREE.DirectionalLight(0xdde2ea, 0.18);
+            back.position.set(0, 2, -8);  // back rim — gives silhouette edge
+            scene.add(back);
 
             const camera = new THREE.PerspectiveCamera(38, rect.width / rect.height, 0.05, 200);
             const controls = new OrbitControls(camera, canvas);
@@ -2161,19 +2166,19 @@
               geometry.center();
               geometry.computeVertexNormals();
 
-              // SOLIDWORKS-style matte metallic: light silver-gray with low gloss.
-              const mat = new THREE.MeshPhongMaterial({
-                color: 0xb8bcc0,
-                specular: 0x404448,
-                shininess: 18,
+              // SOLIDWORKS-style: PBR matte metal for realistic gray with subtle sheen.
+              const mat = new THREE.MeshStandardMaterial({
+                color: 0xb4b8be,
+                metalness: 0.42,
+                roughness: 0.55,
                 flatShading: false
               });
               const mesh = new THREE.Mesh(geometry, mat);
               mesh.rotation.x = -Math.PI / 2;
               scene.add(mesh);
 
-              const edges = new THREE.EdgesGeometry(geometry, 25);
-              const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a2e33, transparent: true, opacity: 0.28 });
+              const edges = new THREE.EdgesGeometry(geometry, 28);
+              const edgeMat = new THREE.LineBasicMaterial({ color: 0x1d2126, transparent: true, opacity: 0.22 });
               const lines = new THREE.LineSegments(edges, edgeMat);
               lines.rotation.x = -Math.PI / 2;
               scene.add(lines);
@@ -2183,7 +2188,8 @@
               const center = box.getCenter(new THREE.Vector3());
               const maxDim = Math.max(size.x, size.y, size.z);
               const fitDist = maxDim / (2 * Math.tan((Math.PI * camera.fov) / 360));
-              camera.position.set(fitDist * 1.4, fitDist * 0.95, fitDist * 1.4);
+              // Classic SW isometric: upper-right-front, slight elevation.
+              camera.position.set(fitDist * 1.45, fitDist * 0.88, fitDist * 1.55);
               camera.lookAt(center);
               controls.target.copy(center);
               controls.update();
