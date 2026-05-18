@@ -16,7 +16,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Cairo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=Cinzel:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     /* ============== Design Tokens · Editorial/Maritime ============== */
@@ -49,10 +49,10 @@
       --grad-text: linear-gradient(135deg, #C9A24A 0%, #A6843A 60%, #0B2240 100%);
       --grad-card: linear-gradient(180deg, rgba(201,162,74,.04) 0%, rgba(201,162,74,0) 100%);
 
-      --font-display: 'Tajawal', 'Cairo', sans-serif;
-      --font-body: 'Cairo', 'Tajawal', sans-serif;
-      --font-en: 'Inter', system-ui, sans-serif;
-      --font-en-display: 'Cinzel', 'Inter', serif;
+      --font-display: 'Readex Pro', 'Manrope', sans-serif;
+      --font-body: 'Readex Pro', 'Manrope', sans-serif;
+      --font-en: 'Manrope', system-ui, sans-serif;
+      --font-en-display: 'Manrope', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
 
       --easing: cubic-bezier(.22,.61,.36,1);
@@ -120,9 +120,88 @@
       margin: 0 auto;
       padding: 0 clamp(20px, 4vw, 48px);
     }
+    /* Give the sidebar some breathing room on wide screens */
+    @media (min-width: 1280px) {
+      .container { padding-right: clamp(20px, 4vw, 48px); padding-left: 280px; }
+    }
     section { position: relative; padding: clamp(80px, 12vh, 160px) 0; }
 
-    /* ============== PAGE MODE — one section at a time ============== */
+    /* Scroll-mode: hide ornaments and redundant elements */
+    #cover, #toc { display: none !important; }
+    .plate-num { display: none !important; }
+    .marquee { display: none !important; }
+    .section-dots { display: none !important; }
+    .scroll-hint { display: none !important; }
+    .section-subtitle { display: none !important; }  /* The English subtitle replicated below the Arabic — sidebar shows EN already */
+
+    /* ============== Sidebar TOC (sticky chapter navigation) ============== */
+    .toc-sidebar {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 24px;
+      z-index: 50;
+      max-height: 80vh;
+      overflow-y: auto;
+      width: 240px;
+      padding: 24px 20px;
+      background: rgba(253,250,241,.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--font-en);
+    }
+    .toc-sidebar h4 {
+      font-family: var(--font-en);
+      font-size: 11px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 14px;
+      font-weight: 600;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc-sidebar ul {
+      list-style: none;
+      display: flex; flex-direction: column;
+      gap: 2px;
+    }
+    .toc-sidebar li[data-toc-item] {
+      padding: 6px 10px;
+      font-size: 13.5px;
+      font-family: var(--font-display);
+      color: var(--fg-muted);
+      cursor: pointer;
+      border-right: 2px solid transparent;
+      transition: all .2s;
+      border-radius: 0;
+      line-height: 1.4;
+    }
+    .toc-sidebar li[data-toc-item]:hover {
+      color: var(--navy);
+      background: var(--bg-cream-strong);
+    }
+    .toc-sidebar li[data-toc-item].active {
+      color: var(--navy);
+      font-weight: 600;
+      border-right-color: var(--gold);
+      background: var(--bg-cream-strong);
+    }
+    .toc-sidebar li[data-toc-item] .num {
+      font-family: var(--font-en);
+      font-size: 10px;
+      letter-spacing: .15em;
+      color: var(--gold);
+      margin-left: 8px;
+      font-weight: 600;
+    }
+    @media (max-width: 1100px) {
+      .toc-sidebar { display: none; }
+    }
+
+    /* ============== PAGE MODE (disabled) ============== */
     body[data-mode="pages"] section,
     body[data-mode="pages"] .marquee {
       display: none;
@@ -193,20 +272,18 @@
     }
 
     .eyebrow {
-      display: inline-flex; align-items: center; gap: 14px;
-      font-family: var(--font-en-display);
-      font-size: 12px;
-      letter-spacing: .3em;
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-en);
+      font-size: 11px;
+      letter-spacing: .22em;
       text-transform: uppercase;
       color: var(--gold-dark);
-      margin-bottom: 24px;
-      font-weight: 500;
+      margin-bottom: 18px;
+      font-weight: 600;
     }
-    .eyebrow::before, .eyebrow::after {
-      content: ''; height: 1px; background: var(--gold);
+    .eyebrow::before {
+      content: ''; height: 1px; width: 32px; background: var(--gold);
     }
-    .eyebrow::before { width: 48px; }
-    .eyebrow::after { width: 16px; }
 
     .section-title {
       font-family: var(--font-display);
@@ -1946,6 +2023,12 @@
     </div>
   </header>
 
+  <!-- Sidebar Table of Contents (desktop) -->
+  <aside class="toc-sidebar" aria-label="فهرس المحتويات">
+    <h4>Contents · المحتويات</h4>
+    <ul id="tocSidebarList"></ul>
+  </aside>
+
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#vision">المقدمة</a>
@@ -3461,29 +3544,21 @@
       const VALID_IDS = new Set(PAGES.map(p => p.id));
       const TOTAL = PAGES.length;
 
-      // Enable page mode
-      document.body.setAttribute('data-mode', 'pages');
+      // Scroll mode (multi-page disabled in this build)
+      // document.body.setAttribute('data-mode', 'pages');
       const nav = document.getElementById('pageNav');
       const indicator = document.getElementById('pageIndicator');
-      if (nav) nav.hidden = false;
+      if (nav) nav.hidden = true;
 
-      // Build the ToC list
-      const tocList = document.getElementById('tocList');
-      if (tocList) {
-        // Skip 'cover' and 'toc' itself from the list
+      // Build the sidebar TOC (always-visible chapter list)
+      const tocSidebar = document.getElementById('tocSidebarList');
+      if (tocSidebar) {
         PAGES.filter(p => p.id !== 'cover' && p.id !== 'toc').forEach(p => {
           const li = document.createElement('li');
-          li.className = 'toc-item';
-          li.innerHTML = `
-            <span class="toc-num">${p.num}</span>
-            <div class="toc-title-wrap">
-              <span class="toc-title">${p.ar}</span>
-              <span class="toc-en">${p.en}</span>
-            </div>
-            <span class="toc-dots"></span>
-          `;
+          li.dataset.tocItem = p.id;
+          li.innerHTML = `<span class="num">${p.num}</span>${p.ar}`;
           li.addEventListener('click', () => navigateTo(p.id));
-          tocList.appendChild(li);
+          tocSidebar.appendChild(li);
         });
       }
 
@@ -3492,48 +3567,23 @@
       function navigateTo(id, opts) {
         opts = opts || {};
         if (!VALID_IDS.has(id)) id = 'cover';
-        const idx = PAGES.findIndex(p => p.id === id);
-        currentIndex = idx;
+        currentIndex = PAGES.findIndex(p => p.id === id);
 
-        // Show only the active section
-        document.querySelectorAll('section').forEach(s => {
-          s.classList.toggle('page-active', s.id === id);
-        });
-
-        // Update indicator
-        if (indicator) {
-          const p = PAGES[idx];
-          if (p.num) indicator.innerHTML = `<b>${p.num}</b> &nbsp;/&nbsp; XVI`;
-          else if (id === 'cover') indicator.innerHTML = '<b>Cover</b>';
-          else indicator.innerHTML = `<b>${p.ar}</b>`;
+        // Scroll-mode: scroll smoothly to the section
+        const target = document.getElementById(id);
+        if (target) {
+          const top = target.getBoundingClientRect().top + window.scrollY - 70;
+          window.scrollTo({ top, behavior: opts.skipHash ? 'auto' : 'smooth' });
         }
 
-        // Update prev/next disabled state
-        nav?.querySelector('[data-action="prev"]')?.toggleAttribute('disabled', idx <= 0);
-        nav?.querySelector('[data-action="next"]')?.toggleAttribute('disabled', idx >= TOTAL - 1);
-
-        // Update hash (without scroll)
+        // Update hash without re-scrolling
         if (!opts.skipHash) {
           const newHash = id === 'cover' ? '' : '#/' + id;
           if (location.hash !== newHash) history.replaceState(null, '', newHash || location.pathname);
         }
 
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: opts.smooth === false ? 'auto' : 'auto' });
-
-        // Re-trigger reveal animations on the new active section
-        const active = document.getElementById(id);
-        if (active) {
-          active.querySelectorAll('.reveal').forEach(el => {
-            el.classList.remove('visible');
-            // Force reflow then re-add to play animation
-            void el.offsetWidth;
-            requestAnimationFrame(() => el.classList.add('visible'));
-          });
-        }
-
-        // Notify other modules (3D viewer, hero canvas) that the active section changed
-        window.dispatchEvent(new CustomEvent('pagechange', { detail: { id, index: idx } }));
+        // Dispatch for other modules
+        window.dispatchEvent(new CustomEvent('pagechange', { detail: { id, index: currentIndex } }));
       }
 
       // Wire up nav buttons
@@ -3564,52 +3614,24 @@
         }
       });
 
-      // Initial route from URL hash
+      // Initial scroll from URL hash (e.g. opening with #/model)
       const initial = (location.hash || '').replace(/^#\/?/, '');
-      navigateTo(initial && VALID_IDS.has(initial) ? initial : 'cover', { skipHash: true });
+      if (initial && VALID_IDS.has(initial)) {
+        // Defer to let layout settle
+        setTimeout(() => navigateTo(initial, { skipHash: true }), 100);
+      }
 
-      // Handle browser back/forward
-      window.addEventListener('hashchange', () => {
-        const id = (location.hash || '').replace(/^#\/?/, '') || 'cover';
-        if (VALID_IDS.has(id) && PAGES[currentIndex].id !== id) {
-          navigateTo(id, { skipHash: true });
-        }
-      });
-
-      // Keyboard arrows
-      document.addEventListener('keydown', (e) => {
-        if (e.target.matches('input, textarea, [contenteditable]')) return;
-        if (e.key === 'ArrowLeft') {
-          // In RTL, left = next
-          if (currentIndex < TOTAL - 1) navigateTo(PAGES[currentIndex + 1].id);
-        } else if (e.key === 'ArrowRight') {
-          if (currentIndex > 0) navigateTo(PAGES[currentIndex - 1].id);
-        } else if (e.key === 'Escape') {
-          navigateTo('toc');
-        }
-      });
-
-      // Swipe gestures (mobile)
-      let touchX = null, touchY = null;
-      document.addEventListener('touchstart', (e) => {
-        if (e.touches.length !== 1) return;
-        touchX = e.touches[0].clientX; touchY = e.touches[0].clientY;
-      }, { passive: true });
-      document.addEventListener('touchend', (e) => {
-        if (touchX == null) return;
-        const t = e.changedTouches[0];
-        const dx = t.clientX - touchX, dy = t.clientY - touchY;
-        touchX = null;
-        // Only horizontal swipes, and only when not interacting with the 3D viewer
-        if (Math.abs(dx) < 80 || Math.abs(dy) > 60) return;
-        if (e.target.closest('.model-viewer, canvas')) return;
-        if (dx < 0) {
-          // Swipe left → next (RTL feel)
-          if (currentIndex < TOTAL - 1) navigateTo(PAGES[currentIndex + 1].id);
-        } else {
-          if (currentIndex > 0) navigateTo(PAGES[currentIndex - 1].id);
-        }
-      }, { passive: true });
+      // Sidebar TOC: highlight current section as you scroll
+      const sections = PAGES.map(p => document.getElementById(p.id)).filter(Boolean);
+      const tocItems = document.querySelectorAll('[data-toc-item]');
+      const scrollObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const id = e.target.id;
+          tocItems.forEach(li => li.classList.toggle('active', li.dataset.tocItem === id));
+        });
+      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+      sections.forEach(s => scrollObs.observe(s));
     })();
   </script>
 </body>
