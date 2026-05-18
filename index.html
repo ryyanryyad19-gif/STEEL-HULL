@@ -2183,33 +2183,35 @@
               const lines = new THREE.LineSegments(edges, edgeMat);
               scene.add(lines);
 
-              // Auto-orient: figure out which axis is the prism length (the longest)
-              // and rotate so that axis sits horizontally → we see the hexagonal end.
-              const sz = new THREE.Box3().setFromObject(mesh).getSize(new THREE.Vector3());
-              const longest = sz.x >= sz.y && sz.x >= sz.z ? 'x'
-                            : sz.y >= sz.x && sz.y >= sz.z ? 'y' : 'z';
-              if (longest === 'x') {
-                // Prism extends along X — rotate so it goes along Z (toward viewer)
+              // Auto-orient: the hull "slice" is a short prism — its length (fore-to-aft)
+              // is the SHORTEST dimension, while width and height are larger. To show the
+              // hexagonal cross-section we must look along the shortest axis.
+              const dim = new THREE.Box3().setFromObject(mesh).getSize(new THREE.Vector3());
+              const shortest = (dim.x <= dim.y && dim.x <= dim.z) ? 'x'
+                            : (dim.y <= dim.x && dim.y <= dim.z) ? 'y' : 'z';
+              if (shortest === 'x') {
+                // Prism length along X — rotate so it ends up along Z (toward camera)
                 mesh.rotation.y = Math.PI / 2;
                 lines.rotation.y = Math.PI / 2;
-              } else if (longest === 'y') {
-                // Prism extends along Y (vertical) — rotate so it goes along Z
+              } else if (shortest === 'y') {
+                // Prism length along Y — rotate so it ends up along Z
                 mesh.rotation.x = Math.PI / 2;
                 lines.rotation.x = Math.PI / 2;
               }
-              // (longest === 'z'): already lined up with view direction
+              // (shortest === 'z'): already aligned with view direction
 
               const box = new THREE.Box3().setFromObject(mesh);
               const size = box.getSize(new THREE.Vector3());
               const center = box.getCenter(new THREE.Vector3());
               const maxDim = Math.max(size.x, size.y, size.z);
               const fitDist = maxDim / (2 * Math.tan((Math.PI * camera.fov) / 360));
-              // Classic SW iso looking ALONG the prism length (Z after auto-orient),
-              // with a 3/4 tilt for depth. Z is dominant so we see the hex end face.
+              // Classic SW iso: look along the prism length (now Z after auto-orient),
+              // with X and Y components for the 3/4 tilt — gives the hex silhouette
+              // with three visible faces (top + slanted right + left side).
               camera.position.set(
-                center.x + fitDist * 0.85,
-                center.y + fitDist * 0.55,
-                center.z + fitDist * 1.70
+                center.x + fitDist * 0.95,
+                center.y + fitDist * 0.65,
+                center.z + fitDist * 1.55
               );
               camera.lookAt(center);
               controls.target.copy(center);
