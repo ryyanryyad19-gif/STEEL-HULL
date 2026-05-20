@@ -1264,26 +1264,35 @@
       border-radius: var(--r-sm);
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: 14px;
+      grid-template-areas:
+        "num title"
+        "num desc";
+      column-gap: 14px;
+      row-gap: 4px;
       align-items: start;
     }
     .phases li::before {
       content: counter(phase, decimal-leading-zero);
+      grid-area: num;
+      align-self: start;
       font-family: var(--font-it-en);
       font-style: italic;
       color: var(--rust);
       font-weight: 700;
       font-size: 18px;
+      line-height: 1.4;
     }
     .phases li strong {
+      grid-area: title;
       font-family: var(--font-disp);
       font-weight: 700;
-      display: block;
-      margin-bottom: 2px;
+      line-height: 1.45;
     }
     .phases li span {
+      grid-area: desc;
       color: var(--muted);
       font-size: 14px;
+      line-height: 1.7;
     }
 
     .service-results {
