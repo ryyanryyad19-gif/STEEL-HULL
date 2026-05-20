@@ -619,16 +619,19 @@
     .pcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
     .pcard-media {
       aspect-ratio: 16 / 9;
-      background: var(--bg-card-warm);
+      background: #000;
       overflow: hidden;
       position: relative;
     }
-    .pcard-media img {
+    .pcard-media img,
+    .pcard-media svg {
       width: 100%; height: 100%;
+      display: block;
       object-fit: cover;
       transition: transform .6s var(--ease);
     }
-    .pcard:hover .pcard-media img { transform: scale(1.04); }
+    .pcard:hover .pcard-media img,
+    .pcard:hover .pcard-media svg { transform: scale(1.03); }
     .pcard-foot {
       display: grid;
       grid-template-columns: auto 1fr auto auto;
@@ -1689,9 +1692,33 @@
 
         <div class="portfolio-cards">
 
+          <!-- 01 · البوك هيد — Bulbous Bow (front-side view with the bulb cutting waves) -->
           <article class="pcard" data-reveal>
             <div class="pcard-media">
-              <img src="assets/img/hull-04-reference.jpg" alt="مرجع حقيقي لمقدّمة سفينة — البوك هيد" loading="lazy" decoding="async" />
+              <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="رسم تقني للبوك هيد — مقدّمة السفينة وقاطع الموج تحت الماء">
+                <rect width="320" height="180" fill="#000"/>
+                <rect x="0" y="120" width="320" height="60" fill="#1a1f3d" opacity="0.5"/>
+                <line x1="0" y1="120" x2="320" y2="120" stroke="#e6cda5" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.45"/>
+                <path d="M 0 132 Q 20 128 40 132 T 80 132 T 120 132 T 160 132 T 200 132 T 240 132 T 280 132 T 320 132" stroke="#3a4685" stroke-width="1" fill="none"/>
+                <path d="M 0 143 Q 25 147 50 143 T 100 143 T 150 143 T 200 143 T 250 143 T 320 143" stroke="#3a4685" stroke-width="0.8" fill="none" opacity="0.7"/>
+                <!-- Hull side profile, bow points right -->
+                <path d="M 30 70 L 220 70 Q 265 70 280 105 L 280 125 L 30 125 Z" fill="#1a1f3d" stroke="#e6cda5" stroke-width="1.6"/>
+                <line x1="30" y1="92" x2="278" y2="92" stroke="#e6cda5" stroke-width="0.5" opacity="0.4"/>
+                <!-- Bulbous protrusion underwater -->
+                <ellipse cx="290" cy="140" rx="22" ry="9" fill="#c46a26" stroke="#e6cda5" stroke-width="1.2"/>
+                <line x1="280" y1="125" x2="293" y2="133" stroke="#e6cda5" stroke-width="1" opacity="0.6"/>
+                <!-- Cut-wave indicator -->
+                <g stroke="#e6cda5" stroke-width="1" fill="none" opacity="0.6">
+                  <path d="M 296 132 Q 304 128 312 130"/>
+                  <path d="M 296 148 Q 304 152 312 150"/>
+                </g>
+                <!-- Direction arrow -->
+                <g stroke="#c46a26" stroke-width="1.5" fill="none">
+                  <line x1="270" y1="55" x2="300" y2="55"/>
+                  <path d="M 300 55 L 295 51 M 300 55 L 295 59"/>
+                </g>
+                <text x="14" y="20" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="8" opacity="0.55" letter-spacing="1.5">01 · BULBOUS BOW</text>
+              </svg>
             </div>
             <div class="pcard-foot">
               <h3 class="pcard-title">البوك هيد</h3>
@@ -1701,9 +1728,35 @@
             </div>
           </article>
 
+          <!-- 02 · القاع — Hull Bottom (cross-section showing stiffeners and water pressure) -->
           <article class="pcard" data-reveal>
             <div class="pcard-media">
-              <img src="assets/img/hull-03-anatomy.jpg" alt="تشريح القاع — الدعامات الطولية والعرضية" loading="lazy" decoding="async" />
+              <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="مقطع تشريحي للقاع يُظهر الدعامات وضغط المياه">
+                <rect width="320" height="180" fill="#000"/>
+                <!-- Water inside hull (subtle) and below -->
+                <rect x="0" y="0" width="320" height="60" fill="#1a1f3d" opacity="0.30"/>
+                <line x1="0" y1="60" x2="320" y2="60" stroke="#e6cda5" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.4"/>
+                <!-- Hull cross-section: deck (open top) + side walls + curved bottom -->
+                <path d="M 60 60 L 60 110 Q 60 145 100 150 L 220 150 Q 260 145 260 110 L 260 60" fill="none" stroke="#e6cda5" stroke-width="2"/>
+                <!-- Inner bottom plate (Double Bottom) -->
+                <path d="M 70 120 L 110 124 L 210 124 L 250 120" fill="none" stroke="#e6cda5" stroke-width="1.5"/>
+                <!-- Vertical stiffeners/girders -->
+                <g stroke="#c46a26" stroke-width="1.5">
+                  <line x1="95" y1="124" x2="95" y2="146"/>
+                  <line x1="130" y1="124" x2="130" y2="148"/>
+                  <line x1="160" y1="124" x2="160" y2="149"/>
+                  <line x1="190" y1="124" x2="190" y2="148"/>
+                  <line x1="225" y1="124" x2="225" y2="146"/>
+                </g>
+                <!-- Pressure arrows pushing up -->
+                <g stroke="#3a4685" stroke-width="1.2" fill="none">
+                  <line x1="80" y1="172" x2="80" y2="158"/><path d="M 80 158 L 77 162 M 80 158 L 83 162"/>
+                  <line x1="160" y1="172" x2="160" y2="158"/><path d="M 160 158 L 157 162 M 160 158 L 163 162"/>
+                  <line x1="240" y1="172" x2="240" y2="158"/><path d="M 240 158 L 237 162 M 240 158 L 243 162"/>
+                </g>
+                <text x="14" y="20" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="8" opacity="0.55" letter-spacing="1.5">02 · HULL BOTTOM</text>
+                <text x="98" y="119" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="6" opacity="0.45">DOUBLE BOTTOM</text>
+              </svg>
             </div>
             <div class="pcard-foot">
               <h3 class="pcard-title">القاع</h3>
@@ -1713,9 +1766,32 @@
             </div>
           </article>
 
+          <!-- 03 · الكويرتة — Bow Flare (side view with outward upper curve deflecting water) -->
           <article class="pcard" data-reveal>
             <div class="pcard-media">
-              <img src="assets/img/hull-02-blueprint.jpg" alt="مخطط هندسي للكويرتة وانحناءة المقدّمة" loading="lazy" decoding="async" />
+              <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="رسم جانبي للكويرتة — انحناءة المقدمة العلوية وتوجيه المياه">
+                <rect width="320" height="180" fill="#000"/>
+                <rect x="0" y="125" width="320" height="55" fill="#1a1f3d" opacity="0.5"/>
+                <line x1="0" y1="125" x2="320" y2="125" stroke="#e6cda5" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.4"/>
+                <!-- main hull below the flare -->
+                <path d="M 30 95 L 200 95 Q 260 95 275 125 L 30 125 Z" fill="#1a1f3d" stroke="#e6cda5" stroke-width="1.6"/>
+                <!-- the FLARE — outward upper curve, highlighted -->
+                <path d="M 200 95 Q 230 78 270 70 L 285 95 Z" fill="#c46a26" stroke="#e6cda5" stroke-width="1.4"/>
+                <line x1="30" y1="95" x2="200" y2="95" stroke="#e6cda5" stroke-width="1.4"/>
+                <!-- water deflection arrows -->
+                <g stroke="#e6cda5" stroke-width="1" fill="none" opacity="0.55">
+                  <path d="M 280 110 Q 295 100 308 102"/>
+                  <path d="M 275 118 Q 290 122 305 119"/>
+                </g>
+                <g stroke="#c46a26" stroke-width="1.3" fill="none">
+                  <path d="M 290 75 Q 302 60 312 55"/>
+                  <path d="M 312 55 L 307 58 M 312 55 L 308 50"/>
+                </g>
+                <!-- waves -->
+                <path d="M 0 135 Q 25 132 50 135 T 100 135 T 150 135 T 200 135 T 250 135 T 320 135" stroke="#3a4685" stroke-width="1" fill="none"/>
+                <path d="M 0 146 Q 25 149 50 146 T 100 146 T 150 146 T 200 146 T 250 146 T 320 146" stroke="#3a4685" stroke-width="0.8" fill="none" opacity="0.65"/>
+                <text x="14" y="20" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="8" opacity="0.55" letter-spacing="1.5">03 · BOW FLARE</text>
+              </svg>
             </div>
             <div class="pcard-foot">
               <h3 class="pcard-title">الكويرتة</h3>
@@ -1725,9 +1801,36 @@
             </div>
           </article>
 
+          <!-- 04 · جانب السفينة — Hull Side (long broadside profile, port/starboard) -->
           <article class="pcard" data-reveal>
             <div class="pcard-media">
-              <img src="assets/img/hull-01-cad-side.jpg" alt="منظور CAD جانبي يُظهر جنب السفينة (الميمنة)" loading="lazy" decoding="async" />
+              <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="منظور جانبي طويل لجانب السفينة — الميمنة والميسرة">
+                <rect width="320" height="180" fill="#000"/>
+                <rect x="0" y="115" width="320" height="65" fill="#1a1f3d" opacity="0.5"/>
+                <line x1="0" y1="115" x2="320" y2="115" stroke="#e6cda5" stroke-width="0.6" stroke-dasharray="3 3" opacity="0.4"/>
+                <!-- Long ship side profile -->
+                <path d="M 15 65 L 270 65 Q 295 65 302 88 L 304 110 Q 300 130 285 132 L 30 132 Q 12 128 12 110 L 14 88 Q 14 70 15 65 Z" fill="#1a1f3d" stroke="#e6cda5" stroke-width="1.6"/>
+                <!-- Deck features -->
+                <rect x="55" y="50" width="22" height="15" fill="#e6cda5" opacity="0.8" rx="1"/>
+                <rect x="155" y="48" width="34" height="17" fill="#e6cda5" opacity="0.85" rx="1"/>
+                <rect x="220" y="50" width="18" height="15" fill="#e6cda5" opacity="0.8" rx="1"/>
+                <!-- waterline emphasized -->
+                <line x1="12" y1="115" x2="302" y2="115" stroke="#e6cda5" stroke-width="1"/>
+                <!-- Section / frame lines -->
+                <g stroke="#e6cda5" stroke-width="0.5" opacity="0.35">
+                  <line x1="70" y1="65" x2="70" y2="132"/>
+                  <line x1="115" y1="65" x2="115" y2="132"/>
+                  <line x1="160" y1="65" x2="160" y2="132"/>
+                  <line x1="205" y1="65" x2="205" y2="132"/>
+                  <line x1="250" y1="65" x2="250" y2="132"/>
+                </g>
+                <!-- Side label -->
+                <text x="158" y="96" text-anchor="middle" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="7" opacity="0.7" letter-spacing="3">STARBOARD</text>
+                <text x="158" y="106" text-anchor="middle" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="5" opacity="0.5" letter-spacing="1.5">الميمنة</text>
+                <!-- waves -->
+                <path d="M 0 125 Q 30 121 60 125 T 120 125 T 180 125 T 240 125 T 320 125" stroke="#3a4685" stroke-width="1" fill="none"/>
+                <text x="14" y="20" fill="#e6cda5" font-family="ui-monospace, monospace" font-size="8" opacity="0.55" letter-spacing="1.5">04 · HULL SIDE</text>
+              </svg>
             </div>
             <div class="pcard-foot">
               <h3 class="pcard-title">جانب السفينة</h3>
